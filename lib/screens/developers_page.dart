@@ -22,26 +22,48 @@ class DevelopersPage extends StatelessWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
-        children: const [
-          DeveloperCard(
+        children: [
+          const DeveloperCard(
             name: "Vishnu Varun",
             email: "punativishnuvarun@gmail.com",
             role: "Flutter Developer",
           ),
-          DeveloperCard(
+          const DeveloperCard(
             name: "Harshini Reddy",
             email: "harshinireddy@gmail.com",
             role: "ML Developer",
           ),
-          DeveloperCard(
+          const DeveloperCard(
             name: "Hemalatha",
             email: "hemalatha@gmail.com",
             role: "UI/UX Designer",
           ),
-          DeveloperCard(
+          const DeveloperCard(
             name: "Vinay Narayana",
             email: "vinaynarayana@gmail.com",
             role: "Backend Developer",
+          ),
+
+          const SizedBox(height: 20),
+          RichText(
+            textAlign: TextAlign.center,
+            text: const TextSpan(
+              style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+              children: [
+                TextSpan(
+                  text: "This application was developed under the guidance of ",
+                ),
+                TextSpan(
+                  text: "Dr. M. Naresh",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Color(0xFF1E3A3A),
+                  ),
+                ),
+                TextSpan(text: "."),
+              ],
+            ),
           ),
         ],
       ),
