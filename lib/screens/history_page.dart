@@ -1,127 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:quantum_care/data/history_repository.dart';
+import 'package:quantum_care/screens/result_page.dart';
 
-class HistoryPage extends StatelessWidget {
+class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
 
-  // Dummy data (replace later with real data / API / DB)
-  final List<Map<String, String>> reports = const [
-    {
-      "name": "Ravi Kumar",
-      "date": "12 Sep 2025",
-      "result": "Malnutrition Risk",
-      "severity": "HIGH",
-    },
-    {
-      "name": "Anita Sharma",
-      "date": "10 Sep 2025",
-      "result": "Normal",
-      "severity": "NORMAL",
-    },
-  ];
+  @override
+  State<HistoryPage> createState() => _HistoryPageState();
+}
 
+class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final history = HistoryRepository().records;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F9F8),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        backgroundColor: const Color(0xFFF4F9F8),
-        centerTitle: true,
-        title: const Text(
-          "History",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF1E3A3A),
-          ),
-        ),
-      ),
-      body: reports.isEmpty
-          ? const Center(
-              child: Text(
-                "No reports available",
-                style: TextStyle(color: Color(0xFF6B7280), fontSize: 16),
-              ),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(centerTitle: true, title: const Text("History")),
+      body: history.isEmpty
+          ? Center(
+              child: Text("No reports yet", style: theme.textTheme.bodyMedium),
             )
           : ListView.builder(
               padding: const EdgeInsets.all(20),
-              itemCount: reports.length,
+              itemCount: history.length,
               itemBuilder: (context, index) {
-                final report = reports[index];
+                final record = history[index];
 
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.06),
-                        blurRadius: 20,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      // Icon
-                      const Icon(
-                        Icons.description_outlined,
-                        size: 36,
-                        color: Color(0xFF2FA4A9),
-                      ),
-
-                      const SizedBox(width: 16),
-
-                      // Details
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              report["name"]!,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF1E3A3A),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              report["date"]!,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Color(0xFF6B7280),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Result: ${report["result"]}",
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF1E3A3A),
-                              ),
-                            ),
-                            Text(
-                              "Severity: ${report["severity"]}",
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF1E3A3A),
-                              ),
-                            ),
-                          ],
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ResultPage(
+                          patientName: record.patientName,
+                          riskScore: record.riskScore,
+                          status: record.status,
                         ),
                       ),
-
-                      // Arrow
-                      const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                        color: Color(0xFF6B7280),
-                      ),
-                    ],
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: theme.cardColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.description_outlined,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                record.patientName,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "${record.riskScore.toStringAsFixed(1)}% Risk",
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                              Text(
+                                record.date.toLocal().toString().split(' ')[0],
+                                style: theme.textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward_ios, size: 16),
+                      ],
+                    ),
                   ),
                 );
               },

@@ -5,72 +5,55 @@ class DevelopersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F9F8),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF4F9F8),
         elevation: 0,
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Color(0xFF1E3A3A)),
-        title: const Text(
+        iconTheme: IconThemeData(color: theme.textTheme.titleLarge?.color),
+        title: Text(
           "Developers",
-          style: TextStyle(
+          style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1E3A3A),
           ),
         ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
-        children: [
-          const DeveloperCard(
+        children: const [
+          DeveloperCard(
             name: "Vishnu Varun",
             email: "punativishnuvarun@gmail.com",
             role: "Flutter Developer",
           ),
-          const DeveloperCard(
+          DeveloperCard(
             name: "Harshini Reddy",
             email: "harshinireddy@gmail.com",
             role: "ML Developer",
           ),
-          const DeveloperCard(
+          DeveloperCard(
             name: "Hemalatha",
             email: "hemalatha@gmail.com",
             role: "UI/UX Designer",
           ),
-          const DeveloperCard(
+          DeveloperCard(
             name: "Vinay Narayana",
             email: "vinaynarayana@gmail.com",
             role: "Backend Developer",
           ),
-
-          const SizedBox(height: 20),
-          RichText(
-            textAlign: TextAlign.center,
-            text: const TextSpan(
-              style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
-              children: [
-                TextSpan(
-                  text: "This application was developed under the guidance of ",
-                ),
-                TextSpan(
-                  text: "Dr. M. Naresh",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Color(0xFF1E3A3A),
-                  ),
-                ),
-                TextSpan(text: "."),
-              ],
-            ),
-          ),
+          SizedBox(height: 20),
+          _MentorText(),
         ],
       ),
     );
   }
 }
 
+/// =======================
+/// Developer Card
+/// =======================
 class DeveloperCard extends StatelessWidget {
   final String name;
   final String role;
@@ -85,22 +68,24 @@ class DeveloperCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.06), blurRadius: 20),
+        boxShadow: [
+          BoxShadow(color: theme.shadowColor.withOpacity(0.1), blurRadius: 20),
         ],
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 26,
-            backgroundColor: const Color(0xFF2FA4A9).withOpacity(0.15),
-            child: const Icon(Icons.person, color: Color(0xFF2FA4A9)),
+            backgroundColor: theme.colorScheme.primary.withOpacity(0.15),
+            child: Icon(Icons.person, color: theme.colorScheme.primary),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -109,25 +94,51 @@ class DeveloperCard extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1E3A3A),
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(role, style: const TextStyle(color: Color(0xFF6B7280))),
+                Text(role, style: theme.textTheme.bodySmall),
                 const SizedBox(height: 4),
                 Text(
                   email,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF6B7280),
-                  ),
+                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
                 ),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// =======================
+/// Mentor / Guidance Text
+/// =======================
+class _MentorText extends StatelessWidget {
+  const _MentorText();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        style: theme.textTheme.bodySmall,
+        children: [
+          const TextSpan(
+            text: "This application was developed under the guidance of ",
+          ),
+          TextSpan(
+            text: "Dr. M. Naresh",
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const TextSpan(text: "."),
         ],
       ),
     );

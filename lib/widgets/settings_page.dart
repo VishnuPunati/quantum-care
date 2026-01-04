@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:quantum_care/screens/developers_page.dart';
 import 'package:quantum_care/screens/login_page.dart';
 import 'package:quantum_care/screens/account_info_page.dart';
+import 'package:quantum_care/widgets/theme_toggle.dart';
 
 class SettingsPage extends StatelessWidget {
   final String name;
@@ -11,26 +12,30 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F9F8),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        elevation: 0,
-        backgroundColor: const Color(0xFFF4F9F8),
         centerTitle: true,
-        title: const Text(
+        elevation: 0,
+        title: Text(
           "Settings",
-          style: TextStyle(
-            fontSize: 24,
+          style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1E3A3A),
           ),
         ),
+        actions: const [
+          ThemeToggle(), // GLOBAL TOGGLE
+        ],
       ),
+
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           _settingsTile(
+            context,
             icon: Icons.person_outline,
             title: "Account Information",
             subtitle: "View your account details",
@@ -45,27 +50,30 @@ class SettingsPage extends StatelessWidget {
           ),
 
           _settingsTile(
+            context,
             icon: Icons.lock_outline,
             title: "Change Password",
             subtitle: "Update your login password",
             onTap: () {
-              // TODO: Change password flow
+              // TODO: Implement change password
             },
           ),
 
           _settingsTile(
+            context,
             icon: Icons.code,
             title: "Developers",
             subtitle: "Meet the development team",
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DevelopersPage()),
+                MaterialPageRoute(builder: (_) => const DevelopersPage()),
               );
             },
           ),
 
           _settingsTile(
+            context,
             icon: Icons.info_outline,
             title: "About App",
             subtitle: "Quantum Care application details",
@@ -73,7 +81,7 @@ class SettingsPage extends StatelessWidget {
               showAboutDialog(
                 context: context,
                 applicationName: "Quantum Care",
-                applicationVersion: "1.0.0",
+                applicationVersion: "1.0.1",
                 applicationLegalese: "Quantum-powered Nutrition Intelligence",
               );
             },
@@ -81,28 +89,31 @@ class SettingsPage extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // Logout button
+          // Logout
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardColor,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.06), blurRadius: 20),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.shadowColor.withOpacity(0.1),
+                  blurRadius: 20,
+                ),
               ],
             ),
             child: ListTile(
-              leading: const Icon(Icons.logout, color: Color(0xFFEF4444)),
-              title: const Text(
+              leading: Icon(Icons.logout, color: theme.colorScheme.error),
+              title: Text(
                 "Logout",
-                style: TextStyle(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFFEF4444),
+                  color: theme.colorScheme.error,
                 ),
               ),
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
                   (route) => false,
                 );
               },
@@ -113,38 +124,40 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _settingsTile({
+  /// =======================
+  /// Reusable Settings Tile
+  /// =======================
+  Widget _settingsTile(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
     required VoidCallback onTap,
   }) {
+    final theme = Theme.of(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.06), blurRadius: 20),
+        boxShadow: [
+          BoxShadow(color: theme.shadowColor.withOpacity(0.1), blurRadius: 20),
         ],
       ),
       child: ListTile(
-        leading: Icon(icon, color: const Color(0xFF2FA4A9)),
+        leading: Icon(icon, color: theme.colorScheme.primary),
         title: Text(
           title,
-          style: const TextStyle(
+          style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1E3A3A),
           ),
         ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(color: Color(0xFF6B7280)),
-        ),
-        trailing: const Icon(
+        subtitle: Text(subtitle, style: theme.textTheme.bodySmall),
+        trailing: Icon(
           Icons.arrow_forward_ios,
           size: 16,
-          color: Color(0xFF6B7280),
+          color: theme.textTheme.bodySmall?.color,
         ),
         onTap: onTap,
       ),

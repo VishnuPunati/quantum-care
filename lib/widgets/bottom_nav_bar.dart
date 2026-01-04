@@ -19,12 +19,11 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int _currentIndex = 0;
-  late List<Widget> _pages;
+  late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
-
     _pages = [
       const DashboardPage(),
       const HistoryPage(),
@@ -34,30 +33,45 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: _pages[_currentIndex],
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        backgroundColor: const Color(0xFFFFFFFF),
-        selectedItemColor: const Color(0xFF111111),
-        unselectedItemColor: const Color(0xFFBDBDBD),
+        type: BottomNavigationBarType.fixed,
+
+        // 🌗 Theme-aware colors
+        backgroundColor: theme.cardColor,
+        selectedItemColor: theme.colorScheme.primary,
+        unselectedItemColor: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
+
         showUnselectedLabels: true,
+        elevation: 10,
+
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          if (_currentIndex == index) return;
+          setState(() => _currentIndex = index);
         },
+
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history_outlined),
+            activeIcon: Icon(Icons.history),
             label: 'History',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),
+            activeIcon: Icon(Icons.settings),
             label: 'Settings',
           ),
         ],

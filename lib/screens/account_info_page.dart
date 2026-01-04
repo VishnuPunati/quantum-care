@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AccountInfoPage extends StatelessWidget {
   final String name;
   final String email;
-  AccountInfoPage({super.key, required this.name, required this.email});
+  const AccountInfoPage({super.key, required this.name, required this.email});
 
   @override
   Widget build(BuildContext context) {

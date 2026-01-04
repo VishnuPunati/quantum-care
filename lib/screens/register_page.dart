@@ -29,10 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-
-    // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
-
     setState(() => _isLoading = false);
 
     Navigator.pushReplacement(
@@ -48,41 +45,42 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F9F8),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.06),
             child: Column(
               children: [
-                const Text(
+                Text(
                   "Quantum Care",
-                  style: TextStyle(
-                    fontSize: 30,
+                  style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF1E3A3A),
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   "Quantum-powered Nutrition Intelligence",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
+                  style: theme.textTheme.bodyMedium,
                 ),
 
                 const SizedBox(height: 40),
 
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(size.width * 0.06),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: theme.cardColor,
                     borderRadius: BorderRadius.circular(20),
-                    boxShadow: const [
+                    boxShadow: [
                       BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.06),
+                        color: theme.shadowColor.withOpacity(0.1),
                         blurRadius: 20,
-                        offset: Offset(0, 10),
+                        offset: const Offset(0, 10),
                       ),
                     ],
                   ),
@@ -91,69 +89,42 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           "Register",
-                          style: TextStyle(
-                            fontSize: 22,
+                          style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF1E3A3A),
                           ),
                         ),
-
                         const SizedBox(height: 20),
 
-                        TextFormField(
+                        _InputField(
                           controller: nameController,
+                          hint: "Full Name",
+                          icon: Icons.person_outline,
                           validator: (v) =>
                               v == null || v.isEmpty ? "Name required" : null,
-                          decoration: InputDecoration(
-                            hintText: "Full Name",
-                            prefixIcon: const Icon(Icons.person_outline),
-                            filled: true,
-                            fillColor: const Color(0xFFF1F5F4),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
                         ),
 
                         const SizedBox(height: 16),
 
-                        TextFormField(
+                        _InputField(
                           controller: emailController,
+                          hint: "Email",
+                          icon: Icons.email_outlined,
                           validator: (v) =>
                               v == null || v.isEmpty ? "Email required" : null,
-                          decoration: InputDecoration(
-                            hintText: "Email",
-                            prefixIcon: const Icon(Icons.email_outlined),
-                            filled: true,
-                            fillColor: const Color(0xFFF1F5F4),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
                         ),
 
                         const SizedBox(height: 16),
 
-                        TextFormField(
+                        _InputField(
                           controller: passController,
+                          hint: "Password",
+                          icon: Icons.lock_outline,
                           obscureText: true,
                           validator: (v) => v == null || v.length < 6
                               ? "Minimum 6 characters"
                               : null,
-                          decoration: InputDecoration(
-                            hintText: "Password",
-                            prefixIcon: const Icon(Icons.lock_outline),
-                            filled: true,
-                            fillColor: const Color(0xFFF1F5F4),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
                         ),
 
                         const SizedBox(height: 24),
@@ -162,25 +133,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           width: double.infinity,
                           height: 52,
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2FA4A9),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
                             onPressed: _isLoading ? null : _register,
                             child: _isLoading
                                 ? const CircularProgressIndicator(
-                                    color: Colors.white,
+                                    strokeWidth: 2,
                                   )
-                                : const Text(
-                                    "Register",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                                : const Text("Register"),
                           ),
                         ),
                       ],
@@ -197,17 +155,56 @@ class _RegisterPageState extends State<RegisterPage> {
                       MaterialPageRoute(builder: (_) => const LoginPage()),
                     );
                   },
-                  child: const Text(
+                  child: Text(
                     "Already a user? Login here",
-                    style: TextStyle(
-                      color: Color(0xFF2FA4A9),
-                      fontWeight: FontWeight.w500,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.primary,
                     ),
                   ),
                 ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// =======================
+/// Reusable Input Widget
+/// =======================
+class _InputField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hint;
+  final IconData icon;
+  final bool obscureText;
+  final String? Function(String?)? validator;
+
+  const _InputField({
+    required this.controller,
+    required this.hint,
+    required this.icon,
+    this.obscureText = false,
+    this.validator,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      validator: validator,
+      decoration: InputDecoration(
+        hintText: hint,
+        prefixIcon: Icon(icon),
+        filled: true,
+        fillColor: theme.cardColor.withOpacity(0.6),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
         ),
       ),
     );

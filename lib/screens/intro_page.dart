@@ -8,28 +8,38 @@ class IntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return AnimatedSplashScreen(
-      backgroundColor: const Color(0xFFF4F9F8), 
-      splashIconSize: 350,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      splashIconSize: size.height * 0.5,
       duration: 3000,
+
       splash: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [_SplashAnimation(), SizedBox(height: 24), _AppTitle()],
+        children: [
+          _SplashAnimation(size: size),
+          const SizedBox(height: 24),
+          const _AppTitle(),
+        ],
       ),
+
       nextScreen: const LoginPage(),
     );
   }
 }
 
 class _SplashAnimation extends StatelessWidget {
-  const _SplashAnimation();
+  final Size size;
+
+  const _SplashAnimation({required this.size});
 
   @override
   Widget build(BuildContext context) {
     return Lottie.asset(
       'lib/animations/Health.json',
-      width: 260,
-      height: 260,
+      width: size.width * 0.6,
+      height: size.width * 0.6,
       fit: BoxFit.contain,
     );
   }
@@ -40,12 +50,11 @@ class _AppTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
+    return Text(
       "Quantum Care",
-      style: TextStyle(
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
         fontSize: 22,
         fontWeight: FontWeight.w600,
-        color: Color(0xFF1E3A3A), 
         letterSpacing: 1.0,
       ),
     );

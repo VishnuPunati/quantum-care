@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quantum_care/widgets/biomarker_input.dart';
+import 'package:quantum_care/widgets/theme_toggle.dart';
+import 'package:quantum_care/screens/history_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -11,137 +13,133 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
+
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFFF4F9F8),
+        backgroundColor: theme.scaffoldBackgroundColor,
+
         appBar: AppBar(
-          title: const Text(
-            "Quantum Care",
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 26,
-              color: Color(0xFF1E3A3A),
-            ),
-          ),
-
           automaticallyImplyLeading: false,
-
           centerTitle: true,
           elevation: 0,
-          backgroundColor: const Color(0xFFF4F9F8),
+          title: Text(
+            "Quantum Care",
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          actions: const [
+            ThemeToggle(), // 🌗 GLOBAL TOGGLE
+          ],
         ),
+
         body: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(size.width * 0.05),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Greeting
-              const Text(
+              Text(
                 "Welcome 👋",
-                style: TextStyle(
-                  fontSize: 22,
+                style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF1E3A3A),
                 ),
               ),
               const SizedBox(height: 6),
 
-              const Text(
+              Text(
                 "Start a new quantum-based health assessment",
-                style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
+                style: theme.textTheme.bodyMedium,
               ),
 
               const SizedBox(height: 25),
 
               // New Assessment Card
-              GestureDetector(
+              _DashboardCard(
+                icon: Icons.health_and_safety,
+                title: "New Health Assessment",
+                subtitle:
+                    "Enter biomarker values to predict malnutrition risk using quantum models.",
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => BiomarkerInput()),
+                    MaterialPageRoute(builder: (_) => const BiomarkerInput()),
                   );
                 },
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.06),
-                        blurRadius: 20,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Icon(
-                        Icons.health_and_safety,
-                        size: 32,
-                        color: Color(0xFF2FA4A9),
-                      ),
-                      SizedBox(height: 12),
-                      Text(
-                        "New Health Assessment",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF1E3A3A),
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        "Enter biomarker values to predict malnutrition risk using quantum models.",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF6B7280),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ),
 
               const SizedBox(height: 16),
 
               // Reports Card
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.06),
-                        blurRadius: 20,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: const [
-                      Icon(
-                        Icons.picture_as_pdf_outlined,
-                        size: 26,
-                        color: Color(0xFF2FA4A9),
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        "View Reports",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Color(0xFF1E3A3A),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              _DashboardCard(
+                icon: Icons.picture_as_pdf_outlined,
+                title: "View Reports",
+                subtitle: "Access previous nutrition assessment reports.",
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const HistoryPage()),
+                  );
+                },
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// =======================
+/// Reusable Dashboard Card
+/// =======================
+class _DashboardCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _DashboardCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: theme.shadowColor.withOpacity(0.1),
+              blurRadius: 20,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, size: 32, color: theme.colorScheme.primary),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(subtitle, style: theme.textTheme.bodyMedium),
+          ],
         ),
       ),
     );
